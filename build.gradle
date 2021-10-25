@@ -36,3 +36,16 @@ allprojects {
 		jcenter()
     }
 }
+checkstyle {
+    toolVersion "8.43"
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "applibgroup_StyleTransfer"
+        property "sonar.organization", "applibgroup"
+        property "sonar.host.url", "http://localhost:9000"
+        property "sonar.sources", "entry,stylize,tvm"
+        property "sonar.java.binaries", "entry/build"
+    }
+}
