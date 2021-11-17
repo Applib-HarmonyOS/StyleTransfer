@@ -4,7 +4,6 @@ import ohos.aafwk.ability.AbilitySlice;
 import ohos.aafwk.content.Intent;
 import ohos.ai.styletransfer.ResourceTable;
 import ohos.ai.stylize.Stylize;
-import org.apache.tvm.LogUtil;
 
 public class MainAbilitySlice extends AbilitySlice {
     private static final String TAG = MainAbilitySlice.class.getName();
@@ -21,7 +20,6 @@ public class MainAbilitySlice extends AbilitySlice {
                 styleImgPath, styleImgName, getResourceManager(), getCacheDir());
 
         float[] output = mtestclassifier.get_output();
-        LogUtil.info(TAG, "prediction finished");
 
         super.setUIContent(ResourceTable.Layout_ability_main);
     }

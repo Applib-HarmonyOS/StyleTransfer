@@ -78,40 +78,6 @@ public class Stylize {
         return styleContent;
     }
 
-    /**
-     * Provides pixel output.
-     *
-     */
-    public PixelMap get_pixel_output() {
-        RawFileEntry rawFileEntryImage = resManager.getRawFileEntry(imagePath);
-        File fileImage = null;
-        try {
-            fileImage = getFileFromRawFile(imageName, rawFileEntryImage, cachedir);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        ImageSource imageSource = ImageSource.create(fileImage, null);
-        ImageSource.DecodingOptions decodingOpts = new ImageSource.DecodingOptions();
-        decodingOpts.desiredSize = new Size(contentInputSize, contentInputSize);
-        PixelMap pixelMap = imageSource.createPixelmap(decodingOpts);
-
-        IntBuffer imageBuffer = IntBuffer.allocate(pixelMap.getImageInfo().size.height
-                * pixelMap.getImageInfo().size.width);
-        pixelMap.readPixels(imageBuffer);
-
-        int[] pixelValues = imageBuffer.array();
-
-        for (int j = 0; j < pixelValues.length; ++j) {
-            pixelValues[j] = (int) (styleContent[j * 3 + 0] * 255.0f) << 16
-                    | (int) (styleContent[j * 3 + 1] * 255.0f) << 8
-                    | (int) (styleContent[j * 3 + 2] * 255.0f);
-        }
-
-        pixelMap.writePixels(imageBuffer);
-        return pixelMap;
-    }
-
     private void run_prediction() {
         // load json graph
         String modelGraph = null;
