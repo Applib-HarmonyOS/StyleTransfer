@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.nio.IntBuffer;
 
 /**
- * Main Class for Food Classifier.
+ * Main Class for Style Transfer.
  */
 
 
@@ -61,16 +61,16 @@ public class Stylize {
      * @param styleImgPath - path for input style image
      * @param styleImgName - name of input style image
      * @param resm         - ResourceManager GetResourceManager()
-     * @param f            - CacheDir()
+     * @param cachedir     - CacheDir()
      */
 
-    public Stylize(String path, String name, String styleImgPath, String styleImgName, ResourceManager resm, File f) {
+    public Stylize(String path, String name, String styleImgPath, String styleImgName, ResourceManager resm, File cachedir) {
         this.imagePath = path;
         this.imageName = name;
         this.styleImagePath = styleImgPath;
         this.styleImageName = styleImgName;
         this.resManager = resm;
-        this.cachedir = f;
+        this.cachedir = cachedir;
         run_style_transfer();
     }
 
@@ -98,7 +98,7 @@ public class Stylize {
             file = getFileFromRawFile("prediction_" + MODEL_CPU_LIB_FILE_NAME, rawFileEntryModelLib, cachedir);
             modelLib = Module.load(file.getAbsolutePath());
         } catch (NullPointerException | IOException e) {
-            e.printStackTrace();
+            return; //failure
         }
 
         Function runtimeCreFun = Function.getFunction("tvm.graph_executor.create");
@@ -115,7 +115,6 @@ public class Stylize {
         try {
             modelParams = getBytesFromRawFile(rawFileEntryModelParams);
         } catch (IOException e) {
-            e.printStackTrace();
             return; //failure
         }
 
@@ -128,7 +127,7 @@ public class Stylize {
         try {
             fileImage = getFileFromRawFile(styleImageName, rawFileEntryImage, cachedir);
         } catch (IOException e) {
-            e.printStackTrace();
+            return; //failure
         }
 
         ImageSource imageSource = ImageSource.create(fileImage, null);
@@ -201,7 +200,7 @@ public class Stylize {
             file = getFileFromRawFile("tranfer_" + MODEL_CPU_LIB_FILE_NAME, rawFileEntryModelLib, cachedir);
             modelLib = Module.load(file.getAbsolutePath());
         } catch (NullPointerException | IOException e) {
-            e.printStackTrace();
+            return; //failure
         }
 
         Function runtimeCreFun = Function.getFunction("tvm.graph_executor.create");
@@ -218,7 +217,6 @@ public class Stylize {
         try {
             modelParams = getBytesFromRawFile(rawFileEntryModelParams);
         } catch (IOException e) {
-            e.printStackTrace();
             return; //failure
         }
 
@@ -231,7 +229,7 @@ public class Stylize {
         try {
             fileImage = getFileFromRawFile(imageName, rawFileEntryImage, cachedir);
         } catch (IOException e) {
-            e.printStackTrace();
+            return; //failure
         }
 
         ImageSource imageSource = ImageSource.create(fileImage, null);
@@ -291,7 +289,7 @@ public class Stylize {
     }
 
     /**
-     * Main Function to run food classifier.
+     * Main Function to run style transfer.
      */
     public void run_style_transfer() {
 

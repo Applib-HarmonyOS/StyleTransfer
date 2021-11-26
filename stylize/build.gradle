@@ -17,7 +17,6 @@ ohos {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'dev.applibgroup:tvm:1.0.0'
     testImplementation 'junit:junit:4.13'
 }
