@@ -6,7 +6,6 @@ import ohos.ai.styletransfer.ResourceTable;
 import ohos.ai.stylize.Stylize;
 
 public class MainAbilitySlice extends AbilitySlice {
-    private static final String TAG = MainAbilitySlice.class.getName();
 
     @Override
     public void onStart(Intent intent) {
@@ -19,7 +18,7 @@ public class MainAbilitySlice extends AbilitySlice {
         Stylize mtestclassifier = new Stylize(imgPath, imgName,
                 styleImgPath, styleImgName, getResourceManager(), getCacheDir());
 
-        float[] output = mtestclassifier.get_output();
+        mtestclassifier.getOutput();
 
         super.setUIContent(ResourceTable.Layout_ability_main);
     }

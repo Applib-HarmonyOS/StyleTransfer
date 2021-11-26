@@ -8,22 +8,20 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class ExampleOhosTest {
-    private static String img_path = "entry/resources/rawfile/belfry-2611573_1280.jpg";
-    private static String img_name = "belfry-2611573_1280.jpg";
-    private static String styleImg_path = "entry/resources/rawfile/style23.jpg";
-    private static String styleImg_name = "style23.jpg";
-    private Context mContext;
-    private Stylize mtestclassifier;
+    private static String imgPath = "entry/resources/rawfile/belfry-2611573_1280.jpg";
+    private static String imgName = "belfry-2611573_1280.jpg";
+    private static String styleImgPath = "entry/resources/rawfile/style23.jpg";
+    private static String styleImgName = "style23.jpg";
 
     @Test
     public void test() {
 
-        mContext = AbilityDelegatorRegistry.getAbilityDelegator().getAppContext();
+        Context mContext = AbilityDelegatorRegistry.getAbilityDelegator().getAppContext();
 
-        mtestclassifier = new Stylize(img_path, img_name,
-                styleImg_path, styleImg_name, mContext.getResourceManager(), mContext.getCacheDir());
+        Stylize mtestclassifier = new Stylize(imgPath, imgName,
+                styleImgPath, styleImgName, mContext.getResourceManager(), mContext.getCacheDir());
 
-        float[] output = mtestclassifier.get_output();
+        float[] output = mtestclassifier.getOutput();
 
         assertEquals(384 * 384 * 3, output.length);
     }

@@ -34,7 +34,6 @@ public class Stylize {
 
     private static final String PREDICTION_MODEL_PARAMS_FILE_PATH = "resources/rawfile/prediction/params.bin";
     private static final String TRANSFER_MODEL_PARAMS_FILE_PATH = "resources/rawfile/transfer/params.bin";
-    private static final String TAG = Stylize.class.getName();
 
     // TVM constants
     private int outputIndex = 0;
@@ -42,6 +41,7 @@ public class Stylize {
     private String inputName = "style_image";
     private String inputNameContent = "content_image";
     private String inputNamePredOutput = "mobilenet_conv/Conv/BiasAdd";
+    private String dataType = "float32";
     private int modelInputSize = 256;
     private int contentInputSize = 384;
     private String imagePath;
@@ -71,14 +71,14 @@ public class Stylize {
         this.styleImageName = styleImgName;
         this.resManager = resm;
         this.cachedir = cachedir;
-        run_style_transfer();
+        runStyleTransfer();
     }
 
-    public float[] get_output() {
+    public float[] getOutput() {
         return styleContent;
     }
 
-    private void run_prediction() {
+    private void runPrediction() {
         // load json graph
         String modelGraph = null;
         RawFileEntry rawFileEntryModel = resManager.getRawFileEntry(PREDICTION_MODEL_GRAPH_FILE_PATH);
@@ -153,7 +153,7 @@ public class Stylize {
 
         // get the function from the module(set input data)
         NDArray inputNdArray = NDArray.empty(new long[]{1,
-            modelInputSize, modelInputSize, imgChannel}, new TVMType("float32"));
+            modelInputSize, modelInputSize, imgChannel}, new TVMType(dataType));
 
         inputNdArray.copyFrom(imgRgbValues);
         Function setInputFunc = graphExecutorModule.getFunction("set_input");
@@ -169,7 +169,7 @@ public class Stylize {
         runFunc.release();
 
         // get the function from the module(get output data)
-        NDArray outputNdArray = NDArray.empty(new long[]{1, 1, 1, 100}, new TVMType("float32"));
+        NDArray outputNdArray = NDArray.empty(new long[]{1, 1, 1, 100}, new TVMType(dataType));
         Function getOutputFunc = graphExecutorModule.getFunction("get_output");
         getOutputFunc.pushArg(outputIndex).pushArg(outputNdArray).invoke();
         float[] output = outputNdArray.asFloatArray();
@@ -180,7 +180,7 @@ public class Stylize {
         this.stylePredict = output;
     }
 
-    private void run_stylize_content() {
+    private void runStylizeContent() {
         // load json graph
         String modelGraph = null;
         RawFileEntry rawFileEntryModel = resManager.getRawFileEntry(TRANSFER_MODEL_GRAPH_FILE_PATH);
@@ -255,10 +255,10 @@ public class Stylize {
 
         // get the function from the module(set input data)
         NDArray inputNdArray = NDArray.empty(new long[]{1,
-            contentInputSize, contentInputSize, imgChannel}, new TVMType("float32"));
+            contentInputSize, contentInputSize, imgChannel}, new TVMType(dataType));
         inputNdArray.copyFrom(imgRgbValues);
 
-        NDArray predInputNdArray = NDArray.empty(new long[]{1, 1, 1, 100}, new TVMType("float32"));
+        NDArray predInputNdArray = NDArray.empty(new long[]{1, 1, 1, 100}, new TVMType(dataType));
         predInputNdArray.copyFrom(stylePredict);
 
         Function setInputFunc = graphExecutorModule.getFunction("set_input");
@@ -277,7 +277,7 @@ public class Stylize {
 
         // get the function from the module(get output data)
         NDArray outputNdArray = NDArray.empty(new long[]{1,
-            contentInputSize, contentInputSize, imgChannel}, new TVMType("float32"));
+            contentInputSize, contentInputSize, imgChannel}, new TVMType(dataType));
         Function getOutputFunc = graphExecutorModule.getFunction("get_output");
         getOutputFunc.pushArg(outputIndex).pushArg(outputNdArray).invoke();
         float[] output = outputNdArray.asFloatArray();
@@ -291,13 +291,13 @@ public class Stylize {
     /**
      * Main Function to run style transfer.
      */
-    public void run_style_transfer() {
+    public void runStyleTransfer() {
 
         // First execute prediction
-        run_prediction();
+        runPrediction();
 
         // Post execute stylize content
-        run_stylize_content();
+        runStylizeContent();
     }
 
     private static File getFileFromRawFile(String filename, RawFileEntry rawFileEntry, File cacheDir)
